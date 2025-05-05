@@ -50,4 +50,15 @@ K běhu projektu potřebujete:
   ```
 6. V prohlížeči přejděte na adresu http://localhost:5000, kde se zobrazí aktuální seznam přítomných uživatelů.
 
+## Formát souboru prezence.txt
+
+Záznamy v souboru prezence.txt mají tento formát:
+```bash
+YYYY-MM-DD HH:MM:SS - ID_karty
+```
+Například:
+```bash
+2025-05-05 08:30:00 - 1234567890
+```
+
 
