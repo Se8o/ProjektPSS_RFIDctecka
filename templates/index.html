@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Správa Uživatelů</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Seznam uživatelů</a></li>
+                <li><a href="{{ url_for('add_user_form') }}">Přidat uživatele</a></li>
+                <li><a href="{{ url_for('log_attendance_form') }}">Zaznamenat přítomnost</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1>RFID Správa Uživatelů</h1>
+        
+        <h2>Seznam uživatelů</h2>
+        <table border="1">
+            <tr>
+                <th>UID</th>
+                <th>Jméno</th>
+                <th>Stav</th>
+                <th>Akce</th>
+            </tr>
+            {% for uid, user in users.items() %}
+            <tr>
+                <td>{{ uid }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.status }}</td>
+                <td>
+                    <a href="{{ url_for('remove_user', tag_id=uid) }}">Odebrat</a>
+                    {% if user.status == 'active' %}
+                        <a href="{{ url_for('block_user', tag_id=uid) }}">Zablokovat</a>
+                    {% else %}
+                        <a href="{{ url_for('unblock_user', tag_id=uid) }}">Odblokovat</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </main>
+</body>
+</html>
