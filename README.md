@@ -29,3 +29,8 @@ K běhu projektu potřebujete:
    ```bash
    git clone https://github.com/Se8o/ProjektPSS_RFIDctecka.git
    cd ProjektPSS_RFIDctecka
+
+2. Nainstalujte požadované Python knihovny:
+  ```bash
+   pip install flask pyserial
+
