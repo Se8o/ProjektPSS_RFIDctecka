@@ -31,16 +31,19 @@ K běhu projektu potřebujete:
    cd ProjektPSS_RFIDctecka
 
 2. Nainstalujte požadované Python knihovny:
+
   ```bash
    pip install flask pyserial
 
 3. Připojte RFID čtečku k počítači přes USB. Zjistěte název sériového portu (např. COM3 pro Windows nebo /dev/ttyUSB0 pro Linux).
 
 4. Otevřete soubor rfid_system.py a upravte port:
+
   ```bash
   ser = serial.Serial('COM3', 9600)  # Změňte COM3 podle potřeby
 
 5. Spusťte systém:
+
   ```bash
   python rfid_system.py
 
