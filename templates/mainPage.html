@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Docházkový terminál</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .admin-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: orange;
+            border: none;
+            color: black;
+            padding: 10px 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 80px auto 50px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            flex: 1;
+            padding: 15px;
+            margin: 5px;
+            background-color: #333;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .tabs button.active {
+            background-color: orange;
+        }
+
+        .options {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .options.active {
+            display: block;
+        }
+
+        .options button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #555;
+            color: white;
+            cursor: pointer;
+        }
+
+        .options button.active {
+            background-color: orange;
+            color: black;
+        }
+
+        .options button:hover {
+            background-color: #777;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="{{ url_for('login') }}">
+        <button class="admin-button">Admin</button>
+    </a>
+    
+    <div class="container">
+        <form method="POST" action="{{ url_for('log_attendance') }}" id="attendanceForm">
+            <div class="tabs">
+                <button type="button" id="arrivalBtn" class="active" onclick="showOptions('arrival')">Příchod</button>
+                <button type="button" id="departureBtn" onclick="showOptions('departure')">Odchod</button>
+            </div>
+    
+            <div id="arrival" class="options active">
+                <button type="button" onclick="highlightOption(this)">Přestávka</button>
+                <button type="button" onclick="highlightOption(this)">Služební cesta</button>
+                <button type="button" onclick="highlightOption(this)">Lékař</button>
+                <button type="button" onclick="highlightOption(this)">Ostatní</button>
+            </div>
+    
+            <div id="departure" class="options">
+                <button type="button" onclick="highlightOption(this)">Přestávka</button>
+                <button type="button" onclick="highlightOption(this)">Služební cesta</button>
+                <button type="button" onclick="highlightOption(this)">Lékař</button>
+                <button type="button" onclick="highlightOption(this)">Ostatní</button>
+            </div>
+    
+            <input type="hidden" name="tag_id" id="tagInput">
+            <input type="hidden" name="type" id="typeInput">
+            <input type="hidden" name="action" id="actionInput">
+        </form>
+    
+        <div class="footer">
+            <p><span id="datetime"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        let uidBuffer = '';
+    
+        window.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('tagInput').value = uidBuffer.trim();
+                uidBuffer = '';
+                prepareForm();
+            } else {
+                uidBuffer += e.key;
+            }
+        });
+    
+        function showOptions(type) {
+            const arrival = document.getElementById('arrival');
+            const departure = document.getElementById('departure');
+            const arrivalBtn = document.getElementById('arrivalBtn');
+            const departureBtn = document.getElementById('departureBtn');
+    
+            arrival.classList.remove('active');
+            departure.classList.remove('active');
+            arrivalBtn.classList.remove('active');
+            departureBtn.classList.remove('active');
+    
+            if (type === 'arrival') {
+                arrival.classList.add('active');
+                arrivalBtn.classList.add('active');
+            } else {
+                departure.classList.add('active');
+                departureBtn.classList.add('active');
+            }
+    
+            document.querySelectorAll('.options button').forEach(btn => btn.classList.remove('active'));
+        }
+    
+        function highlightOption(button) {
+            document.querySelectorAll('.options.active button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+        }
+    
+        function prepareForm() {
+            const type = document.getElementById('arrival').classList.contains('active') ? 'Příchod' : 'Odchod';
+            const selected = document.querySelector('.options.active button.active');
+            const tag = document.getElementById('tagInput').value;
+    
+            if (!selected) {
+                alert("Vyberte jednu z možností.");
+                return false;
+            }
+    
+            if (!tag) {
+                alert("Přiložte čip.");
+                return false;
+            }
+    
+            document.getElementById('typeInput').value = type;
+            document.getElementById('actionInput').value = selected.innerText;
+    
+            document.getElementById('attendanceForm').submit();
+        }
+    
+        function updateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const date = now.toLocaleDateString('cs-CZ', options);
+            const time = now.toLocaleTimeString('cs-CZ');
+            document.getElementById('datetime').textContent = `${date} ${time}`;
+        }
+    
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+    
+    </body>
+    </html>
